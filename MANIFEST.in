@@ -1,0 +1,2 @@
+include .gitignore.in
+recursive-include tests *.py

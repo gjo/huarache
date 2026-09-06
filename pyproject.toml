@@ -1,0 +1,173 @@
+[build-system]
+requires = ['setuptools']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'huarache'
+version = '0.1.dev0'
+description = 'the thin application helpers'
+dynamic = ['readme']
+requires-python = '>=3.14'
+license-files = ['COPYING.txt']
+authors = [{name = 'Gouji Ochiai', email = 'gjo.ext@gmail.com'}]
+classifiers = [
+  'Development Status :: 1 - Planning',
+  'Intended Audience :: Developers',
+  'Operating System :: OS Independent',
+  'Programming Language :: Python',
+  'Programming Language :: Python :: 3.14',
+  'Programming Language :: Python :: Implementation :: CPython',
+  'Programming Language :: Python :: Free Threading',
+  'Programming Language :: Python :: Free Threading :: 1 - Unstable',
+  'Topic :: Software Development :: Libraries',
+  'Topic :: Utilities',
+]
+urls.repository = 'https://github.com/gjo/huarache'
+dependencies = []
+
+[project.optional-dependencies]
+testing = [
+  'pytest',
+  'pytest-asyncio',
+  'pytest-randomly',
+]
+develop = [
+  'build',
+  'check-manifest',
+  'coverage',
+  'mypy',
+  'pytest',
+  'pytest-asyncio',
+  'pytest-randomly',
+  'readme-renderer[md]',
+  'ruff~=0.16.5',
+  'tox',
+  'twine',
+]
+
+[tool.setuptools]
+dynamic = {readme = {file = ['README.rst', 'CHANGES.rst']}}
+packages.find = {where = ['src']}
+zip-safe = false
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 100
+
+[tool.coverage.run]
+branch = true
+source = ['src', 'tests']
+
+[tool.mypy]
+show_error_codes = true
+
+# NOTE: `type[T] | None` で回避しているが ` | None` を外すなら抑制が必要
+# [[tool.mypy.overrides]]
+# module = "tests.*"
+# disable_error_code = [
+#   'type-abstract',  # Allow non concrete class for provides
+# ]
+
+[tool.ruff]
+line-length = 119
+target-version = 'py314'
+
+[tool.ruff.format]
+docstring-code-format = true
+preview = true
+
+[tool.ruff.lint]
+select = ['ALL']
+ignore = [
+  # exclusive rules
+  'COM812',  # missing-trailing-comma
+  'D203',  # incorrect-blank-line-before-class
+  'D213',  # multi-line-summary-second-line
+
+  # documentations
+  'CPY001',  # missing-copyright-notice
+  'D100',  # undocumented-public-module
+  'D104',  # undocumented-public-package
+  'D107',  # undocumented-public-init
+  'D400',  # missing-trailing-period
+  'D415',  # missing-terminal-punctuation
+  'ERA001',  # commented-out-code
+  'FIX001',  # line-contains-fixme
+  'FIX002',  # line-contains-todo
+  'TD001',  # invalid-todo-tag
+  'TD003',  # missing-todo-link
+
+  # そのうちやる
+  'D101',
+  'D102',
+]
+
+[tool.ruff.lint.per-file-ignores]
+'tests/*' = [
+  'PLC0415',  # import-outside-top-level
+  'PLR2004',  # magic-value-comparison
+  'S101',  # assert
+  'SLF001',  # private-member-access
+
+  'ARG001',  # unused-function-argument
+  'ARG002',  # unused-method-argument
+  'ARG003',  # unused-class-method-argument
+  'D103',  # undocumented-public-function
+]
+
+[tool.tox]
+env_list = [
+  'py314',
+  'py314t',
+  'coverage',
+  'lint',
+  'mypy',
+]
+skip_missing_interpreters = true
+
+[tool.tox.env_run_base]
+commands = [['pytest', '{posargs}']]
+extras = ['testing']
+use_frozen_constraints = true
+constraints = ['constraints.txt']
+
+[tool.tox.env.coverage]
+commands = [
+  ['coverage', 'erase'],
+  ['coverage', 'run', '-m', 'pytest', '{posargs}'],
+  ['coverage', 'report'],
+]
+deps = ['coverage']
+use_develop = true
+
+[tool.tox.env.lint]
+skip_install = true
+commands = [
+  ['ruff', 'format', '--check', 'src', 'tests'],
+  ['ruff', 'check', 'src', 'tests'],
+  ['check-manifest'],
+  ['python', '-c', 'import shutil; shutil.rmtree("dist/tox", True)'],
+  ['python', '-m', 'build', '--quiet', '--wheel', '--outdir', 'dist/tox'],
+  ['twine', 'check', 'dist/tox/*.whl'],
+]
+deps = [
+  'build',
+  'check-manifest',
+  'readme_renderer[md]',
+  'ruff',
+  'twine',
+]
+
+[tool.tox.env.mypy]
+commands = [['mypy', '--no-incremental', '--strict', 'src', 'tests']]
+deps = ['mypy']
+use_develop = true
+
+# run explicit
+[tool.tox.env.codeformat]
+skip_install = true
+commands = [
+  ['ruff', 'format', 'src', 'tests'],
+  ['ruff', 'check', '--fix', 'src', 'tests'],
+]
+deps = ['ruff']
