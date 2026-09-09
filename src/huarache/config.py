@@ -30,6 +30,7 @@ class Configurator:
             raise AlreadyCommitedError
         if module_name not in self._included:
             module = import_module(module_name)
-            activator: ConfigActivator = module.includeme
-            activator(self)
+            if hasattr(module, "includeme"):
+                activator: ConfigActivator = module.includeme
+                activator(self)
             self._included.append(module_name)
