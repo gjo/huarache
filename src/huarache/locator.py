@@ -4,17 +4,19 @@ from logging import getLogger
 from typing import TYPE_CHECKING, Any
 
 from .exceptions import AlreadyRegisteredError
-from .interfaces import Container as ContainerProto
-from .interfaces import ContainerFactory, Factory, T
-from .interfaces import Registry as RegistryProto
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
 
+    from .interfaces import Container as ContainerProto
+    from .interfaces import ContainerFactory, Factory, T
+    from .interfaces import Registry as RegistryProto
+
+
 logger = getLogger(__name__)
 
 
-class Registry(RegistryProto):
+class Registry:
     def __init__(
         self, *, container_factory: ContainerFactory | None = None, settings: Mapping[str, Any] | None = None
     ) -> None:
@@ -42,7 +44,7 @@ class Registry(RegistryProto):
         return self._factories[provide][name]
 
 
-class Container(ContainerProto):
+class Container:
     def __init__(self, registry: RegistryProto) -> None:
         self.registry = registry
         self._cache: dict[tuple[type, str], Any] = {}
