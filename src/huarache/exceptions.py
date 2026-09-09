@@ -2,9 +2,21 @@ class HuaracheError(Exception):
     pass
 
 
-class AlreadyRegisteredError(HuaracheError):
+class LocatorError(HuaracheError):
     pass
 
 
-class AlreadyCommitedError(HuaracheError):
+class AlreadyRegisteredError(LocatorError):
+    pass
+
+
+class AlreadyCommitedError(LocatorError):
+    pass
+
+
+class AnnotaionResolverError(HuaracheError):
+    pass
+
+
+class DoesNotGetModuleError(AnnotaionResolverError):
     pass

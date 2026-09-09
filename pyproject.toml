@@ -97,21 +97,27 @@ ignore = [
   'TD001',  # invalid-todo-tag
   'TD003',  # missing-todo-link
 
+  # accepted
+  'ANN401',  # any-type
+
   # そのうちやる
   'D101',
   'D102',
+  'D103',
 ]
 
 [tool.ruff.lint.per-file-ignores]
 'tests/*' = [
+  # accepted
+  'ARG001',  # unused-function-argument
+  'ARG002',  # unused-method-argument
+  'ARG003',  # unused-class-method-argument
   'PLC0415',  # import-outside-top-level
   'PLR2004',  # magic-value-comparison
   'S101',  # assert
   'SLF001',  # private-member-access
 
-  'ARG001',  # unused-function-argument
-  'ARG002',  # unused-method-argument
-  'ARG003',  # unused-class-method-argument
+  # documentataions
   'D103',  # undocumented-public-function
 ]
 
