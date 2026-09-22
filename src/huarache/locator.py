@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
 
     from .interfaces import Container as ContainerProto
-    from .interfaces import ContainerFactory, Factory, T
+    from .interfaces import ContainerFactory, Factory, Provide, T
     from .interfaces import Registry as RegistryProto
 
 
@@ -27,7 +27,7 @@ class Registry:
     def create_container(self) -> ContainerProto:
         return self._container_factory(self)
 
-    def register_factory(self, factory: Factory[T], provide: type[T] | None, *, name: str = "") -> None:
+    def register_factory(self, factory: Factory[T], provide: Provide[T], *, name: str = "") -> None:
         assert provide is not None  # noqa: S101
         assert isinstance(name, str)  # noqa: S101
         names = self._factories.setdefault(provide, {})
@@ -38,7 +38,7 @@ class Registry:
     def find_names(self, provide: type) -> Sequence[str]:
         return sorted(self._factories[provide].keys())
 
-    def find_factory(self, provide: type[T] | None, *, name: str = "") -> Factory[T]:
+    def find_factory(self, provide: Provide[T], *, name: str = "") -> Factory[T]:
         assert provide is not None  # noqa: S101
         assert isinstance(name, str)  # noqa: S101
         return self._factories[provide][name]
@@ -50,7 +50,7 @@ class Container:
         self._cache: dict[tuple[type, str], Any] = {}
         self._cache_lock = asyncio.Lock()
 
-    def find(self, provide: type[T] | None, *, name: str = "") -> T:
+    def find(self, provide: Provide[T], *, name: str = "") -> T:
         assert provide is not None  # noqa: S101
         assert isinstance(name, str)  # noqa: S101
         spec = provide, name
@@ -66,7 +66,7 @@ class Container:
             self._cache[spec] = instance
         return instance
 
-    async def async_find(self, provide: type[T] | None, *, name: str = "") -> T:
+    async def async_find(self, provide: Provide[T], *, name: str = "") -> T:
         assert provide is not None  # noqa: S101
         assert isinstance(name, str)  # noqa: S101
         spec = provide, name

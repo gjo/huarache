@@ -1,9 +1,13 @@
-from typing import TYPE_CHECKING, Any, Protocol, TypeVar
+from typing import TYPE_CHECKING, Any, ParamSpec, Protocol, TypeVar
 
 if TYPE_CHECKING:
-    from collections.abc import Awaitable, Mapping, Sequence
+    from collections.abc import Awaitable, Callable, Mapping, Sequence
 
 T = TypeVar("T")
+P = ParamSpec("P")
+
+# NOTE: `type[T]` はconcrete classしか通さないので、Protocolを許容するためにHACKする
+type Provide[T] = type[T] | None
 
 
 class ConfigActivator(Protocol):
@@ -20,8 +24,8 @@ class Configurator(Protocol):
 class Container(Protocol):
     registry: Registry
 
-    def find(self, provide: type[T] | None, *, name: str = ...) -> T: ...
-    async def async_find(self, provide: type[T] | None, *, name: str = ...) -> T: ...
+    def find(self, provide: Provide[T], *, name: str = ...) -> T: ...
+    async def async_find(self, provide: Provide[T], *, name: str = ...) -> T: ...
 
 
 class ContainerFactory(Protocol):
@@ -32,13 +36,17 @@ class Factory[T](Protocol):
     def __call__(self, container: Container) -> T | Awaitable[T]: ...
 
 
+class FactoryDecorator(Protocol):
+    def __call__(self, provide: Provide[T], *, name: str = ...) -> Callable[[Callable[P, T]], Callable[P, T]]: ...
+
+
 class Registry(Protocol):
     settings: Mapping[str, Any]
 
     def create_container(self) -> Container: ...
     def find_names(self, provide: type) -> Sequence[str]: ...
-    def register_factory(self, factory: Factory[T], provide: type[T] | None, *, name: str = ...) -> None: ...
-    def find_factory(self, provide: type[T] | None, *, name: str = ...) -> Factory[T]: ...
+    def register_factory(self, factory: Factory[T], provide: Provide[T], *, name: str = ...) -> None: ...
+    def find_factory(self, provide: Provide[T], *, name: str = ...) -> Factory[T]: ...
 
 
 class RegistryFactory(Protocol):

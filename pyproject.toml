@@ -61,7 +61,7 @@ source = ['src', 'tests']
 [tool.mypy]
 show_error_codes = true
 
-# NOTE: `type[T] | None` で回避しているが ` | None` を外すなら抑制が必要
+# NOTE: `type[T] | None` (の alias の `Provide[T]`) で回避しているが ` | None` を外すなら抑制が必要
 # [[tool.mypy.overrides]]
 # module = "tests.*"
 # disable_error_code = [
