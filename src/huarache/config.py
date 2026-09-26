@@ -2,7 +2,7 @@ from importlib import import_module
 from typing import TYPE_CHECKING, Any
 
 from .exceptions import AlreadyCommitedError
-from .locator import Registry as _RegistryImpl
+from .service_locator import Registry as _RegistryImpl
 
 if TYPE_CHECKING:
     from collections.abc import Mapping

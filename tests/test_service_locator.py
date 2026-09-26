@@ -32,7 +32,7 @@ class FooImpl2:
 
 
 def test_explicit_container_factory() -> None:
-    from huarache.locator import Container, Registry
+    from huarache.service_locator import Container, Registry
 
     if TYPE_CHECKING:
         from huarache.interfaces import Container as ContainerProto
@@ -50,7 +50,7 @@ def test_explicit_container_factory() -> None:
 
 
 def test_factory() -> None:
-    from huarache.locator import Registry
+    from huarache.service_locator import Registry
 
     registry = Registry()
     registry.register_factory(foo_factory, Foo)
@@ -69,7 +69,7 @@ def test_factory() -> None:
 
 
 def test_factory_named() -> None:
-    from huarache.locator import Registry
+    from huarache.service_locator import Registry
 
     registry = Registry()
     registry.register_factory(foo_factory, Foo, name="name")
@@ -87,7 +87,7 @@ def test_factory_named() -> None:
 
 
 def test_factory_named_multiple() -> None:
-    from huarache.locator import Registry
+    from huarache.service_locator import Registry
 
     registry = Registry()
     registry.register_factory(FooImpl2, Foo, name="scond")
@@ -101,7 +101,7 @@ def test_factory_named_multiple() -> None:
 
 @pytest.mark.asyncio
 async def test_factory_async() -> None:
-    from huarache.locator import Registry
+    from huarache.service_locator import Registry
 
     registry = Registry()
     registry.register_factory(async_foo_factory, Foo)
@@ -120,7 +120,7 @@ async def test_factory_async() -> None:
 
 
 def test_factory_async_from_normal() -> None:
-    from huarache.locator import Registry
+    from huarache.service_locator import Registry
 
     registry = Registry()
     registry.register_factory(async_foo_factory, Foo)
@@ -134,7 +134,7 @@ def test_factory_async_from_normal() -> None:
 
 @pytest.mark.asyncio
 async def test_factory_await_no_async() -> None:
-    from huarache.locator import Registry
+    from huarache.service_locator import Registry
 
     registry = Registry()
     registry.register_factory(foo_factory, Foo)
@@ -149,7 +149,7 @@ async def test_factory_await_no_async() -> None:
 
 
 def test_factory_method() -> None:
-    from huarache.locator import Registry
+    from huarache.service_locator import Registry
 
     registry = Registry()
     registry.register_factory(FooImpl.factory, Foo)
@@ -165,7 +165,7 @@ def test_factory_method() -> None:
 
 def test_raises_already_registered() -> None:
     from huarache.exceptions import AlreadyRegisteredError
-    from huarache.locator import Registry
+    from huarache.service_locator import Registry
 
     registry = Registry()
     registry.register_factory(foo_factory, Foo)
@@ -174,7 +174,7 @@ def test_raises_already_registered() -> None:
 
 
 def test_raises_does_not_registered() -> None:
-    from huarache.locator import Registry
+    from huarache.service_locator import Registry
 
     registry = Registry()
     with pytest.raises(KeyError):

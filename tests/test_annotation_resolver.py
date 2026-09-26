@@ -28,13 +28,13 @@ def _expected_huarache_config_configurator() -> dict[str, Any]:
     }
 
 
-def _expected_huarache_locator_registry() -> dict[str, Any]:
+def _expected_huarache_service_locator_registry() -> dict[str, Any]:
     from huarache.interfaces import ContainerFactory
 
     return {"container_factory": ContainerFactory | None, "return": None, "settings": Mapping[str, Any] | None}
 
 
-def _expected_huarache_locator_container() -> dict[str, Any]:
+def _expected_huarache_service_locator_container() -> dict[str, Any]:
     from huarache.interfaces import Registry
 
     return {"registry": Registry, "return": None}
@@ -56,8 +56,8 @@ def _expected_huarache_locator_container() -> dict[str, Any]:
             {"annotation": Any, "globals_": dict[str, Any], "module": ModuleType, "return": Any},
         ),
         ("huarache.config", "Configurator", _expected_huarache_config_configurator),
-        ("huarache.locator", "Registry", _expected_huarache_locator_registry),
-        ("huarache.locator", "Container", _expected_huarache_locator_container),
+        ("huarache.service_locator", "Registry", _expected_huarache_service_locator_registry),
+        ("huarache.service_locator", "Container", _expected_huarache_service_locator_container),
     ],
 )
 def test_annotation_resolver_dogfooding(
